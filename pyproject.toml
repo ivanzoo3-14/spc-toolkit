@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spc-toolkit"
+version = "0.1.0"
+description = "Process capability indices and control charts for manufacturing measurements. Standard library only."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Ivan Zamora-Solano" }]
+keywords = ["spc", "quality", "manufacturing", "capability", "cpk", "control-chart", "metrology"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Manufacturing",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering",
+]
+dependencies = []
+
+[project.optional-dependencies]
+png = ["matplotlib>=3.5"]
+
+[project.scripts]
+spc = "spc.cli:main"
+
+[project.urls]
+Source = "https://github.com/ivanzoo3-14/spc-toolkit"
+
+[tool.setuptools]
+packages = ["spc"]

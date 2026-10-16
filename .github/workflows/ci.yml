@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: No third-party runtime dependencies
+        run: |
+          python - <<'PY'
+          import tomllib, pathlib, sys
+          data = tomllib.loads(pathlib.Path("pyproject.toml").read_text())
+          deps = data["project"].get("dependencies", [])
+          print("runtime dependencies:", deps or "none")
+          sys.exit(1 if deps else 0)
+          PY
+
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Smoke test the example dataset
+        run: |
+          python -m spc report examples/bore_diameter.csv --value value \
+            --lsl 9.90 --usl 10.10 --feature "bore diameter" --units mm --out /tmp/spc-out
+          test -s /tmp/spc-out/chart.svg
+          test -s /tmp/spc-out/report.md
+          head -1 /tmp/spc-out/chart.svg | grep -q '<svg'
